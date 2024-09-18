@@ -1,0 +1,29 @@
+`timescale 1ns / 1ps
+
+module crc32_tb;
+    reg [31:0] crcIn; 
+    reg [7:0] data; // Inputs
+    wire [31:0] crcOut; // Outputs
+
+    // Instantiate the Unit Under Test (UUT)
+    crc32 uut (
+        .crcIn(crcIn),
+        .data(data),
+        .crcOut(crcOut)
+    );
+
+    initial begin
+        // Initialize Inputs
+        crcIn = 32'hFFFFFFFF; // Initial CRC value
+        data = 8'h00; // Start data at 0
+        #100; // Wait 100 ns for global reset to finish
+
+        // Check CRC for values from 0 to 255
+        for (integer i = 0; i < 256; i = i + 1) begin
+            data = i;
+            #10; // Allow time for CRC calculation
+            $display("Data: %h, CRC Output: %h", data, crcOut);
+        end
+    end
+
+endmodule
