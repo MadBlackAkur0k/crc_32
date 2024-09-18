@@ -1,0 +1,31 @@
+`timescale 1ns / 1ps
+`ifndef CRC32_V_
+`define CRC32_V_
+
+module crc32 (
+    input [31:0] crcIn,   // Input CRC value
+    input [7:0] data,     // Input data byte
+    output reg [31:0] crcOut // Output CRC value
+);
+
+    reg [31:0] crcReg;
+    integer i;
+
+    always @* begin
+        crcReg = crcIn; // Инициализация CRC без инверсии
+
+        // Процесс обработки каждого бита входного байта в порядке little-endian
+        for (i = 0; i < 8; i = i + 1) begin
+            if ((crcReg[0] ^ data[i]) == 1) begin
+                crcReg = (crcReg >> 1) ^ 32'hEDB88320; // Применение полинома для стандарта CRC32 (обратный полином)
+            end else begin
+                crcReg = crcReg >> 1; // Сдвиг вправо
+            end
+        end
+
+        crcOut = crcReg; // Результат без инверсии
+    end
+
+endmodule
+
+`endif // CRC32_V
