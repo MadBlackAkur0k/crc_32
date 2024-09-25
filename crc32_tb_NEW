@@ -1,0 +1,29 @@
+module CRC_tb;
+    reg [31:0] crcIn; 
+    reg [7:0] data; // Inputs
+    wire [31:0] crcOut; // Outputs
+
+    // Instantiate the Unit Under Test (UUT)
+    crc uut (.crcIn(crcIn), .data(data), .crcOut(crcOut));
+
+    // Clock generation
+    initial begin
+        // Initialize Inputs
+        crcIn = 32'hFFFFFFFF; // Стандартная инициализация CRC-32
+        data = 8'h00;
+        #100; // Wait 100 ns for global reset
+    end
+
+    always begin
+        #10 data = data + 1; // Увеличиваем входные данные каждые 10 единиц времени
+    end
+
+    always begin
+        #100 crcIn = crcIn + 1; // Увеличиваем CRC каждые 100 единиц времени
+    end
+
+    // Вывод значений в консоль
+    initial begin
+        $monitor("Time = %0t | crcIn = %h | data = %h | crcOut = %h", $time, crcIn, data, crcOut);
+    end
+endmodule
